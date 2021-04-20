@@ -1,0 +1,21 @@
+/* ==============
+  Login
+===================*/
+.logo-login {
+    background-image: url('./../assets/universidad-logo.png');
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+.image-right  {
+    float: right;
+    position: relative;
+    padding-right: 5%;
+}
+
+.btn-custom { 
+    background-color: #5eadb2;
+    border-color: #5eadb2;
+    color: white;
+}

@@ -41,6 +41,7 @@ export const CREATE_COMPROBANTE_ENTRADA = gql`
         $numero: Int = 1,
         $factura: String = "",
         $grupo: String = "",
+        $contratista: String = "",
         $unidad: Int = 1,
         $cantidad: Int = 1,
         $descripcion_comprobante: String = "",
@@ -81,6 +82,9 @@ export const CREATE_COMPROBANTE_ENTRADA = gql`
         }) {
             returning {
                 id
+                comprobante {
+                    id
+                }
             }
         }
     }
@@ -126,4 +130,100 @@ export const EDIT_BIEN_SALIDA = gql`
     }
 `
 
-// $fecha_creacion: timestamptz = now
+export const TRASLADO_DEPENDENCIA = gql`
+    mutation trasladoDependencia($fk_dependencia: Int!, $fk_usuario: Int!) {
+        update_encargado_dependencia(where: { fk_dependencia: { _eq: $fk_dependencia } }, _set: { fk_usuario: $fk_usuario }) {
+            affected_rows
+        }
+        update_usuario_auth(where: { fk_usuario: { _eq: $fk_usuario } }, _set: { fk_rol: 3 }) {
+            affected_rows
+        }
+    }
+`
+export const TRASLADO_BIENES = id => gql`
+    mutation trasladoBienes($fk_usuario: Int!) {
+        update_bien(where: {id: {_eq: ${id}}}, _set: {fk_usuario: $fk_usuario, fk_estado: 6}) {
+            affected_rows
+        }
+    }
+`
+
+export const UPDATE_USUARIO = gql`
+    mutation updateUsuarioById($id: Int!, $nombres: String!, $apellidos: String!, $correo: String!) {
+        update_usuario(where: { id: { _eq: $id } }, _set: { nombres: $nombres, apellidos: $apellidos, correo: $correo }) {
+            affected_rows
+        }
+    }
+`
+
+export const CREATE_DEPENDENCIA = gql`
+    mutation crearDependencia($dependencia: String!, $fk_sede: Int!) {
+        insert_dependencia(objects: { fk_sede: $fk_sede, dependencia: $dependencia }) {
+            affected_rows
+            returning {
+                dependencia
+                id
+            }
+        }
+    }
+`
+
+export const CREATE_DEPENDENCIA_USER = gql`
+    mutation crearEncargadoDependencia($fk_usuario: Int!, $fk_dependencia: Int!) {
+        insert_encargado_dependencia(objects: { fk_dependencia: $fk_dependencia, fk_usuario: $fk_usuario }) {
+            affected_rows
+        }
+        update_usuario_auth(where: { fk_usuario: { _eq: $fk_usuario } }, _set: { fk_rol: 3 }) {
+            affected_rows
+        }
+    }
+`
+
+export const CREATE_SEDE = gql`
+    mutation crearSede($sede: String!) {
+        insert_sede(objects: { sede: $sede }) {
+            affected_rows
+        }
+    }
+`
+
+export const DISABLE_USER = gql`
+    mutation deshabilitarUsuario($id: Int!) {
+        update_usuario(where: { _and: [{ id: { _eq: $id } }, { auth: { fk_rol: { _neq: 1 } } }] },
+            _set: { fk_estado: 2 }) {
+            affected_rows
+        }
+    }
+`
+
+export const UPDATE_PWD = gql`
+    mutation updateUserPw($id: Int!, $password: String) {
+        update_usuario_auth(where: { fk_usuario: { _eq: $id } }, _set: { password: $password }) {
+            affected_rows
+        }
+    }
+`
+export const CHANGE_ROL = gql`
+    mutation edirUserRole($fk_usuario: Int!, $fk_rol: Int!) {
+        update_usuario_auth(where: { fk_usuario: { _eq: $fk_usuario } }, _set: { fk_rol: $fk_rol }) {
+            affected_rows
+        }
+    }
+`
+
+export const UPDATE_DEPENDENCIA = gql`
+    mutation updateUsuarioDependencia($idUsuario: Int!, $fk_dependencia: Int!) {
+        update_usuario(where: { id: { _eq: $idUsuario } }, _set: { fk_dependencia: $fk_dependencia }) {
+            affected_rows
+        }
+    }
+`
+
+export const UPDATE_BIEN_STATE = gql`
+    mutation darBajaBien($id: Int!) {
+        update_bien(where: { id: { _eq: $id } }, _set: { fk_estado: 7 }) {
+            affected_rows
+        }
+    }
+`
+

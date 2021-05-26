@@ -30,6 +30,11 @@ export const bienColumns = [
         sort: 'asc',
     },
     {
+        label: 'HASH',
+        field: 'hash',
+        sort: 'asc',
+    },
+    {
         label: '',
         field: 'dar_baja',
         sort: 'asc',
@@ -42,46 +47,6 @@ export const bienColumns = [
 ]
 
 export const levantamientoColumns = [
-    {
-        label: 'Name',
-        field: 'name',
-        width: 150,
-        attributes: {
-            'aria-controls': 'DataTable',
-            'aria-label': 'Name',
-        },
-    },
-    {
-        label: 'Position',
-        field: 'position',
-        width: 270,
-    },
-    {
-        label: 'Office',
-        field: 'office',
-        width: 200,
-    },
-    {
-        label: 'Age',
-        field: 'age',
-        sort: 'asc',
-        width: 100,
-    },
-    {
-        label: 'Start date',
-        field: 'date',
-        sort: 'disabled',
-        width: 150,
-    },
-    {
-        label: 'Salary',
-        field: 'salary',
-        sort: 'disabled',
-        width: 100,
-    },
-]
-
-export const levantamientoColumns1 = [
     {
         label: 'Placa',
         field: 'placa',
@@ -109,5 +74,190 @@ export const levantamientoColumns1 = [
     {
         label: 'Estado',
         field: 'estado',
+    },
+    {
+        label: 'Contratista',
+        field: 'contratista',
+    },
+    {
+        label: 'Verificación',
+        field: 'verificacion',
+    },
+    {
+        label: 'Observaciones',
+        field: 'observaciones',
+    },
+]
+
+export const trasladoColumns = [
+    {
+        label: '',
+        field: 'init',
+    },
+    {
+        label: '',
+        field: 'check',
+    },
+    {
+        label: 'Placa',
+        field: 'placa',
+    },
+    {
+        label: 'Descripción',
+        field: 'descripcion',
+    },
+    {
+        label: 'Sede',
+        field: 'sede',
+    },
+    {
+        label: 'Espacio Físico',
+        field: 'espacio_fisico',
+    },
+    {
+        label: 'Dependencia',
+        field: 'dependencia',
+    },
+    {
+        label: 'Responsable',
+        field: 'id',
+    },
+    {
+        label: 'Observaciones',
+        field: 'observaciones',
+    }
+]
+
+export const transaccionesColumns = [
+    {
+        label: 'ID Blockchain TX',
+        field: 'idBlockchain',
+        sort: 'asc',
+    },
+    {
+        label: 'Fecha',
+        field: 'fecha',
+        sort: 'asc',
+    },
+    {
+        label: 'ID Usuario',
+        field: 'id',
+        sort: 'asc',
+    },
+    {
+        label: 'Procedimiento',
+        field: 'procedimiento',
+        sort: 'asc',
+    },
+    {
+        label: 'Documento IPFS',
+        field: 'documentoIPFS',
+        sort: 'asc',
+    }
+]
+
+export const notificacionesColumns = [
+    {
+        label: 'ID',
+        field: 'idProceso',
+        sort: 'asc',
+    },
+    {
+        label: 'Usuario origen',
+        field: 'user_start',
+        sort: 'asc',
+    },
+    {
+        label: 'Usuario destino',
+        field: 'user_end',
+        sort: 'asc',
+    },
+    {
+        label: 'Tipo solicitud',
+        field: 'solicitud',
+        sort: 'asc',
+    },
+    {
+        label: '',
+        field: 'action',
+        sort: 'asc',
+    },
+]
+
+export const bajaBienColumns = [
+    {
+        label: '',
+        field: 'espacio',
+    },
+    {
+        label: '',
+        field: 'check',
+    },
+    {
+        label: 'Placa',
+        field: 'placa',
+        sort: 'asc',
+    },
+    {
+        label: 'Descripcion',
+        field: 'descripcion',
+        sort: 'asc',
+    },
+    {
+        label: 'Sede',
+        field: 'sede',
+        sort: 'asc',
+    },
+    {
+        label: 'Espacio Físico',
+        field: 'espacio_fisico',
+        sort: 'asc',
+    },
+    {
+        label: 'Dependencia',
+        field: 'dependencia',
+        sort: 'asc',
+    },
+    {
+        label: 'Observaciones',
+        field: 'observaciones',
+        sort: 'asc',
+    },
+]
+
+export const aprobacionBajaBienColumns = [
+    {
+        label: '',
+        field: 'espacio',
+    },
+    {
+        label: 'Placa',
+        field: 'placa',
+        sort: 'asc',
+    },
+    {
+        label: 'Descripcion',
+        field: 'descripcion',
+        sort: 'asc',
+    },
+    {
+        label: 'Sede',
+        field: 'sede',
+        sort: 'asc',
+    },
+    {
+        label: 'Espacio Físico',
+        field: 'espacio_fisico',
+        sort: 'asc',
+    },
+    {
+        label: 'Dependencia',
+        field: 'dependencia',
+        sort: 'asc',
+    },
+    {
+        label: 'Observaciones',
+        field: 'observaciones',
+        sort: 'asc',
     },
 ]

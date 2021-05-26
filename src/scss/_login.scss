@@ -7,15 +7,28 @@
     top:0;
     right:0;
 }
+/*body .BackgroundImage {
+    background-size: contain;
+}*/
+.bodyHero {
+    background-image:  url('./../assets/login/login-hero.jpg');
+    background-size: cover !important;
+    height: 1000px;
+    
+}
 
-.image-right  {
+/*.bg-primary{
+    background-color: red;
+}*/
+
+/*.image-right  {
     float: right;
     position: relative;
     padding-right: 5%;
-}
+}*/
 
 .btn-custom { 
-    background-color: #5eadb2;
+    background-color: transparent;
     border-color: #5eadb2;
-    color: white;
+    color: #5b626b;
 }

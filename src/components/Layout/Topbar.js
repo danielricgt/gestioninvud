@@ -8,7 +8,7 @@ import ProfileMenu from './Menus/profileMenu';
 import { isLarge } from '../../store/actions';
 import { connect } from 'react-redux';
 
-import logo from './../../assets/sidebar/logo.png'
+import logo from './../../assets/universidad-logo.png'
 
 class Topbar extends Component {
 

@@ -65,6 +65,7 @@ class Register extends Component {
         const errorMessage = 'El campo es requerido'
         return (
             <React.Fragment>
+            <div className="bodyHero">
                 <Row>
                     <Col xs="6">
                         <Button color="primary" className="px-4" onClick={() => this.props.history.push('/')}>Atras</Button>
@@ -73,8 +74,8 @@ class Register extends Component {
                 <div className="wrapper-page">
                     <Card className="overflow-hidden account-card mx-3">
 
-                        <div className="bg-primary p-4 text-white text-center position-relative">
-                            <h4 className="font-20 m-b-5">Registro</h4>
+                        <div className="bg-muted p-4 text-white text-center position-relative">
+                            <h4 className="font-20 m-b-5">Formulario De Registro</h4>
                         </div>
                         <div className="account-card-content">
 
@@ -98,7 +99,10 @@ class Register extends Component {
                                     pattern: { value: '^[A-Za-z]+$', errorMessage: 'Solo valores alfanuméricos' },
                                 }} />
                                 <AvField label="Correo" placeholder="Ingrese su correo" name="correo" type="text" grid={{ xs: 8 }} validate={{
-                                    required: { value: true, errorMessage: errorMessage }
+                                    required: { value: true, errorMessage: errorMessage },
+                                    pattern: { value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9-]+)*$/, errorMessage: 'Error en el email'}
+                                    // pattern: { value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+udistrital\.edu\.co$/, errorMessage: 'Error en el email'}
+
                                 }} />
                                 <AvField label="Sede" name="sede" type='select' value={this.state.sede} grid={{ xs: 8 }} validate={{
                                     required: { value: true, errorMessage: errorMessage }
@@ -153,6 +157,7 @@ class Register extends Component {
                         </div>
                     </Card>
                 </div>
+            </div>
             </React.Fragment>
         );
     }
@@ -164,12 +169,3 @@ const mapStatetoProps = state => {
 }
 
 export default connect(mapStatetoProps, { registerUser, emptyError })(Register);
-
-
-// const validateEmail = (email) => {
-//     let isValid = false
-//     if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9-]+)*$/.test(String(email).toLowerCase().trim()) && String(email).includes('udistrital')) {
-//         isValid = true
-//     }
-//     return isValid
-// }

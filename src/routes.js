@@ -8,6 +8,14 @@ import TrasladoIndividual from './pages/Traslado/trasladoIndividual'
 import Transacciones from './pages/Transacciones/transacciones';
 import Profile from './pages/Profile/profile';
 import Notifications from './pages/Notifications/notifications';
+import AprobacionBajaBien from './pages/Aprobaciones/aprobacionesBaja'
+import AprobacionIngresoEntrada from './pages/Aprobaciones/aprobacionesIngresoEntrada'
+import AprobacionIngresoSalida from './pages/Aprobaciones/aprobacionesIngresoSalida'
+import AprobacionLevantamiento from './pages/Aprobaciones/aprobacionesLevantamientos'
+import BajaBien from './pages/Bienes/bajaBien'
+import AltaBien from './pages/Bienes/altaBien'
+import AprobacionTraslado from './pages/Aprobaciones/aprobacionesTraslado'
+import AprobacionDependencia from './pages/Aprobaciones/aprobacionesDependencia'
 
 
 // TODO
@@ -28,11 +36,9 @@ const routes = [
     { path: '/logout', component: Logout, ispublic: true },
     { path: '/register', component: Register, ispublic: true },
 
-  
-
     // TODO Icons
     { path: '/icons-material', component: MaterialDesign },
-    { path: '/icons-fontawesome', component: FontAwesome },
+    { path: '/icons-fontawesome', componentgit: FontAwesome },
     { path: '/icons-ion', component: IonIcons },
     { path: '/icons-themify', component: ThemifyIcons },
     { path: '/icons-dripicons', component: Dripicons },
@@ -48,33 +54,20 @@ const routes = [
     { path: '/transacciones', component: Transacciones },
     { path: '/configuracion', component: Profile },
     { path: '/notificaciones', component: Notifications },
+    { path: '/aprobacion-baja-bien', component: AprobacionBajaBien },
+    { path: '/aprobacion-levantamiento', component: AprobacionLevantamiento },
+    { path: '/aprobacion-ingreso-entrada', component: AprobacionIngresoEntrada },
+    { path: '/aprobacion-ingreso-salida', component: AprobacionIngresoSalida },
+    { path: '/aprobacion-traslado-individual', component: AprobacionTraslado },
+    { path: '/aprobacion-traslado-dependencia', component: AprobacionDependencia },
+    { path: '/baja-bien', component: BajaBien },
+    { path: '/alta-bien', component: AltaBien },
 
     // Auht
-    // { path: '/', component: Login, ispublic: true},
     { path: '/', component: Dashboard },
 ];
 
 export default routes;
-
-
-// import Uialerts from './pages/Ui/ui-alerts';
-// import Uibuttons from './pages/Ui/ui-buttons';
-// import Uicards from './pages/Ui/ui-cards';
-// import Uicarousel from './pages/Ui/ui-carousel';
-// import Uidropdowns from './pages/Ui/ui-dropdowns';
-// import Uigrid from './pages/Ui/ui-grid';
-// import Uiimages from './pages/Ui/ui-images';
-// import Uimodals from './pages/Ui/ui-modals';
-// import Uirangeslider from './pages/Ui/ui-rangeslider';
-// import UisessionTimeout from './pages/Ui/ui-session-timeout';
-// import Uiprogressbars from './pages/Ui/ui-progressbars';
-// import Uisweetalert from './pages/Ui/ui-sweet-alert';
-// import Uitabsaccordions from './pages/Ui/ui-tabs-accordions';
-// import Uitypography from './pages/Ui/ui-typography';
-// import Uivideo from './pages/Ui/ui-video';
-// import Uigeneral from './pages/Ui/ui-general';
-// import Uicolors from './pages/Ui/ui-colors';
-// import Uirating from './pages/Ui/ui-rating';
 
 
 //   // Ui Elements

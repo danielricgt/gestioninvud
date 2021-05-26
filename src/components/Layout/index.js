@@ -11,7 +11,6 @@ import Footer from './Footer';
 const AuthLayoutContent = (props) => {
   document.body.classList.remove('bg-primary');
   document.body.style.backgroundColor = '#f8f8fa'
-
   return <React.Fragment>
     <div id="wrapper">
       <Topbar />

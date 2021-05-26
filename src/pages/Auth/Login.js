@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { checkLogin } from '../../store/actions';
 import { AvForm, AvField } from 'availity-reactstrap-validation';
 import logo from './../../assets/universidad-logo.png'
-// import BackgroundImage from './../../assets/login/login-hero.jpg'
+//import BackgroundImage from './../../assets/login/login-hero.jpg'
 
 class Login extends Component {
 
@@ -41,21 +41,28 @@ class Login extends Component {
 
 
     render() {
+   
         const errorMessage = 'El campo es requerido'
         return (
             <React.Fragment>
+            <div className="bodyHero">
+                
                 <div className="container">
-                    <img src={logo} style={{width:"25%", height:"25%"}} className="image-right" alt="Universidad Distrital"/>
+                    <Row>
+                    <Col sm='12'> 
+                        <br></br>
+                        <img src={logo} style={{width:"200px", height:"200px", display:"block", marginLeft:"auto", marginRight:"auto"}} className="image" alt="Universidad Distrital"/>
+                    </Col> 
+                    </Row>
                 </div>
                 <div className="wrapper-page">
                     <Card className="overflow-hidden account-card mx-3">
-                        <div className="bg-primary p-4 text-white text-center position-relative">
-                            <h3 className="font-20 m-b-5">HERRAMIENTA DE APOYO A LA</h3>
-                            <h3 className="font-20 m-b-5">GESTI&Oacute;N DE INVENTARIOS DE LA</h3>
-                            <h3 className="font-20 m-b-5">UNIVERSIDAD DISTRITAL</h3>
+                        <div className="bg-muted p-4 text-white text-center position-relative">
+                            <h3 className="font-20 m-b-5">HERRAMIENTA DE APOYO A LA GESTI&Oacute;N DE INVENTARIOS DE LA UNIVERSIDAD DISTRITAL</h3>
+                     
                         </div>
 
-                        <div className="account-card-content">
+                        <div className="account-card-content" style={{paddingTop:"20px"}}>
                            {this.props.user && <Alert color="success">
                                 Login éxitoso.</Alert>}
 
@@ -63,7 +70,7 @@ class Login extends Component {
                                 {this.props.loginError}</Alert>}
 
                             <AvForm className="form-horizontal m-t-10" onValidSubmit={this.handleSubmit} >
-                                <AvField name="correo" label="Usario" value={this.state.correo} placeholder="Ingrese su usuario" type="text" validate={{
+                                <AvField name="correo" label="Usuario" value={this.state.correo} placeholder="Ingrese su usuario" type="text" validate={{
                                     required: { value: true, errorMessage: errorMessage },
                                 }} />
                                 <AvField name="password" label="Contraseña" value={this.state.password} placeholder="Ingrese su contraseña" type="password" validate={{
@@ -71,7 +78,7 @@ class Login extends Component {
                                 }} />
                                 <Row className="form-group m-t-20 text-center">
                                     <Col sm="12" className="text-center">
-                                        <Button  className="w-md waves-effect waves-light btn-custom" type="submit">Inicar sesión</Button>
+                                        <Button  className="w-md waves-effect waves-light btn-custom" type="submit">Iniciar sesión</Button>
                                     </Col>
                                 </Row>
 
@@ -84,6 +91,7 @@ class Login extends Component {
                         </div>
                     </Card>
                 </div>
+            </div>
             </React.Fragment>
         );
     }

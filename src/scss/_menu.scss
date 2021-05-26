@@ -588,11 +588,20 @@
   padding: 20px 0px;
 
   .page-title {
-    font-size: 18px;
+    font-size: 22px;
     margin: 0;
     line-height: 30px;
     font-weight: 700;
-    color: blue;
+    color: #2471A3;
+    text-align: center;
+  }
+
+  .page-welcome-title{
+    font-size: 24px;
+    margin: 0;
+    line-height: 30px;
+    font-weight: 700;
+    color: #696c6e;
     text-align: center;
   }
 

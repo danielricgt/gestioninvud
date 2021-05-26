@@ -1,148 +1,57 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, Breadcrumb, BreadcrumbItem,} from 'reactstrap';
+import { Container, Row, Col, Spinner } from 'reactstrap';
 import { activateAuthLayout } from '../../store/actions';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import SettingMenu from '../Subpages/Settingmenu';
-
-import 'chartist/dist/scss/chartist.scss';
-
-
-//Images
-import img1 from '../../images/services-icon/01.png';
-import img2 from '../../images/services-icon/02.png';
-import img3 from '../../images/services-icon/03.png';
-import img4 from '../../images/services-icon/04.png';
-
+import { getLoggedInUser } from './../../helpers/authUtils'
+import TransaccionesTable from './../Tables/transaccionesTable';
+import { getTransactions } from './../../helpers/fetch';
+// import { GET_BIENES } from './../../graphql/queries'
 
 class Transacciones extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            Transactions: [],
+            Depedendencias: null,
+            loading: true,
+            user: getLoggedInUser(),
         };
     }
 
-    componentDidMount() {
-        document.body.style.backgroundColor = '#f8f8fa'
-        this.props.activateAuthLayout();
+    async componentDidMount() {
+        const idSede = Number(this.state.user.dependencia.sede.id)
+        const { loading, error, data } = await getTransactions({idSede})
+        if(loading) {
+            console.log('cargando');
+        }
+        if(error) {
+            alert('Error')
+        }
+        this.setState({ Transactions: data.transacciones, loading: false, })
     }
 
     render() {
+        const { Transactions, loading, user } = this.state;
+        const idRol = Number(user.auth.rol.id)
+
         return (
             <React.Fragment>
                 <Container fluid>
                     <div className="page-title-box">
                         <Row className="align-items-center">
-                            <Col sm="6">
-                                <h4 className="page-title">Transacciones</h4>
-                                <Breadcrumb>
-                                    <BreadcrumbItem active>Welcome to UD Dashboard</BreadcrumbItem>
-                                </Breadcrumb>
-                            </Col>
-                            <Col sm="6">
-                                <div className="float-right d-none d-md-block">
-                                    <SettingMenu />
-                                </div>
+                            <Col sm="12">
+                                <h3 className="page-title">TRANSACCIONES</h3>
                             </Col>
                         </Row>
                     </div>
-
                     <Row>
-                        <Col xl="3" md="6">
-                            <Card className="mini-stat bg-primary text-white">
-                                <CardBody>
-                                    <div className="mb-4">
-                                        <div className="float-left mini-stat-img mr-4">
-                                            <img src={img1} alt="" />
-                                        </div>
-                                        <h5 className="font-16 text-uppercase mt-0 text-white-50">Orders</h5>
-                                        <h4 className="font-500">1,685 <i className="mdi mdi-arrow-up text-success ml-2"></i></h4>
-                                        <div className="mini-stat-label bg-success">
-                                            <p className="mb-0">+ 12%</p>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <div className="float-right">
-                                            <Link to="#" className="text-white-50"><i className="mdi mdi-arrow-right h5"></i></Link>
-                                        </div>
-                                        <p className="text-white-50 mb-0">Since last month</p>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col xl="3" md="6">
-                            <Card className="mini-stat bg-primary text-white">
-                                <CardBody>
-                                    <div className="mb-4">
-                                        <div className="float-left mini-stat-img mr-4">
-                                            <img src={img2} alt="" />
-                                        </div>
-                                        <h5 className="font-16 text-uppercase mt-0 text-white-50">Revenue</h5>
-                                        <h4 className="font-500">52,368 <i className="mdi mdi-arrow-down text-danger ml-2"></i></h4>
-                                        <div className="mini-stat-label bg-danger">
-                                            <p className="mb-0">- 28%</p>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <div className="float-right">
-                                            <Link to="#" className="text-white-50"><i className="mdi mdi-arrow-right h5"></i></Link>
-                                        </div>
-                                        <p className="text-white-50 mb-0">Since last month</p>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col xl="3" md="6">
-                            <Card className="mini-stat bg-primary text-white">
-                                <CardBody>
-                                    <div className="mb-4">
-                                        <div className="float-left mini-stat-img mr-4">
-                                            <img src={img3} alt="" />
-                                        </div>
-                                        <h5 className="font-16 text-uppercase mt-0 text-white-50">Average Price</h5>
-                                        <h4 className="font-500">15.8 <i className="mdi mdi-arrow-up text-success ml-2"></i></h4>
-                                        <div className="mini-stat-label bg-info">
-                                            <p className="mb-0"> 00%</p>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <div className="float-right">
-                                            <Link to="#" className="text-white-50"><i className="mdi mdi-arrow-right h5"></i></Link>
-                                        </div>
-                                        <p className="text-white-50 mb-0">Since last month</p>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col xl="3" md="6">
-                            <Card className="mini-stat bg-primary text-white">
-                                <CardBody>
-                                    <div className="mb-4">
-                                        <div className="float-left mini-stat-img mr-4">
-                                            <img src={img4} alt="" />
-                                        </div>
-                                        <h5 className="font-16 text-uppercase mt-0 text-white-50">Product Sold</h5>
-                                        <h4 className="font-500">2436 <i className="mdi mdi-arrow-up text-success ml-2"></i></h4>
-                                        <div className="mini-stat-label bg-warning">
-                                            <p className="mb-0">+ 84%</p>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <div className="float-right">
-                                            <Link to="#" className="text-white-50"><i className="mdi mdi-arrow-right h5"></i></Link>
-                                        </div>
-
-                                        <p className="text-white-50 mb-0">Since last month</p>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
+                        {loading ?
+                            <Spinner color="info" style={{ width: '3rem', height: '3rem', marginLeft: '45%', margingRight: '45%' }} type="grow" /> :
+                            <TransaccionesTable idRol={idRol} Transactions={Transactions} ></TransaccionesTable>
+                        }
                     </Row>
-
-
                 </Container>
-
             </React.Fragment>
         );
     }

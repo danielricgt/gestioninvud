@@ -5,6 +5,7 @@ import { LOGIN_USER } from './../graphql/queries';
 
 //Set the logged in user data in local session 
 export const setLoggeedInUser = (user) => {
+    console.log(user);
     localStorage.setItem('user', JSON.stringify(user));
 }
 
@@ -29,7 +30,7 @@ export const register = (data) => {
             id: Number(data.id),
             nombres: data.nombres,
             apellidos: data.apellidos,
-            correo: data.correo,
+            correo: data.correo.toLowerCase(),
             fk_dependencia: Number(data.dependencia),
             password: md5(data.password),
             cargo: data.cargo,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, Button, Modal, ModalFooter } from 'reactstrap';
 import { MDBDataTableV5 } from 'mdbreact';
 import { bienColumns } from './columnsData'
 import { update_bien } from './../../helpers/fetch'
@@ -25,6 +25,8 @@ class BienesTable extends Component {
             data: null,
             idRolTable: '',
             bien: null,
+            hash_bien: null,
+            modalHash: false
         }
         this.changeStateBien = this.changeStateBien.bind(this)
         this.updateBien = this.updateBien.bind(this)
@@ -32,6 +34,8 @@ class BienesTable extends Component {
         this.modalConfimation = this.modalConfimation.bind(this)
         this.callbackModal = this.callbackModal.bind(this)
         this.toggleModal = this.toggleModal.bind(this)
+        this.toggleModalHash = this.toggleModalHash.bind(this)
+        this.openModalHash = this.openModalHash.bind(this)
     }
 
     componentDidMount() {
@@ -49,6 +53,7 @@ class BienesTable extends Component {
         data.observaciones = bien.observaciones
 
         try {
+            this.setState({ modalConfirm: false })
             await update_bien(data)
             alert('Actualización correcta')
             this.props.update(this.props.idRol)
@@ -90,9 +95,23 @@ class BienesTable extends Component {
         }));
     }
 
+    openModalHash(data) {
+        this.setState({
+            hash_bien: data,
+            modalHash: true
+        });
+    }
+
+    toggleModalHash() {
+        this.setState(prevState => ({
+            modalHash: !prevState.modal
+        }));
+    }
+
 
     render() {
         const { idRol, Bienes } = this.props;
+        const { hash_bien } = this.state
         let columns = bienColumns
         let rows = []
 
@@ -102,20 +121,37 @@ class BienesTable extends Component {
 
         Bienes.forEach(data => {
             if (data.usuario) {
-                rows.push({
-                    placa: data.placa ? data.placa : '-',
-                    descripcion: data.descripcion ? data.descripcion : '-',
-                    sede: data.usuario.dependencia.sede.sede ? data.usuario.dependencia.sede.sede : '-',
-                    espacio_fisico: data.espacio_fisico ? data.espacio_fisico : '-',
-                    dependencia: data.usuario.dependencia.dependencia ? data.usuario.dependencia.dependencia : '-',
-                    observaciones: data.observaciones ? data.observaciones : 'Ninguna',
-                    dar_baja: idRol === 4 ? '' :
-                        Number(data.estado.id) === 1 ?
-                            <button className="btn btn-danger rounded-pill" onClick={() => this.modalConfimation({ id: Number(data.id), fk_estado: 2 }, idRol, data)}>Dar de baja</button>
-                            : Number(data.estado.id) === 2 ? <button className="btn btn-success rounded-pill" onClick={() => this.modalConfimation({ id: Number(data.id), fk_estado: 1 }, idRol, data)}>Dar de alta</button>
-                                : <button className="btn btn-secondary rounded-pill" disabled={true}>Pendiente</button>,
-                    actualizar: idRol === 4 ? '' : <button className="btn btn-primary rounded-pill" onClick={() => this.openModal(data)}>Actualizar</button>
-                })
+                if(idRol === 1 || idRol === 2) {
+                    rows.push({
+                        placa: data.placa ? data.placa : '-',
+                        descripcion: data.descripcion ? data.descripcion : '-',
+                        sede: data.usuario.dependencia.sede.sede ? data.usuario.dependencia.sede.sede : '-',
+                        espacio_fisico: data.espacio_fisico ? data.espacio_fisico : '-',
+                        dependencia: data.usuario.dependencia.dependencia ? data.usuario.dependencia.dependencia : '-',
+                        observaciones: data.observaciones ? data.observaciones : 'Ninguna',
+                        hash: !data.hash_bien ? 'Hash no disponible' :
+                            <Button type="button" color="primary" className="waves-effect waves-light" 
+                                onClick={() => this.openModal(data.hash_bien,)}>
+                                Ver
+                            </Button>,
+                        actualizar: idRol === 4 ? '' : <button className="btn btn-primary rounded-pill" onClick={() => this.openModal(data)}>Actualizar</button>
+                    })
+                }
+                else{
+                    rows.push({
+                        placa: data.placa ? data.placa : '-',
+                        descripcion: data.descripcion ? data.descripcion : '-',
+                        sede: data.usuario.dependencia.sede.sede ? data.usuario.dependencia.sede.sede : '-',
+                        espacio_fisico: data.espacio_fisico ? data.espacio_fisico : '-',
+                        dependencia: data.usuario.dependencia.dependencia ? data.usuario.dependencia.dependencia : '-',
+                        observaciones: data.observaciones ? data.observaciones : 'Ninguna',
+                        hash: !data.hash_bien ? 'Hash no disponible' :
+                        <Button type="button" color="primary" className="waves-effect waves-light" 
+                            onClick={() => this.openModalHash(data.hash_bien,)}>
+                            Ver
+                        </Button>,
+                    })
+                }
             }
         })
 
@@ -134,10 +170,12 @@ class BienesTable extends Component {
                                     <MDBDataTableV5
                                         responsive
                                         bordered
-                                        searching={false}
                                         fullPagination={true}
                                         infoLabel={['', '-', 'de', '']}
                                         data={data}
+                                        searchTop
+                                        searchBottom={false}
+                                        noRecordsFoundLabel={'No se encontraron resultados'}
                                     />
                                 </CardBody>
                             </Card>
@@ -149,53 +187,26 @@ class BienesTable extends Component {
 
                     <Modal isOpen={this.state.modalConfirm} toggle={this.toggleModal} >
                         <div className="modal-header">
-                            <h5 className="modal-title mt-0" id="myModalLabel">Modal Heading</h5>
+                            <h5 className="modal-title mt-0" id="confirmacion">¿Estas seguro de realizar esta acción?</h5>
                             <button type="button" onClick={() => this.setState({ modalConfirm: false })} className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <ModalBody>
-                            <h5>Overflowing text to show scroll behavior</h5>
-                            <p>Cras mattis consectetur purus sit amet fermentum.
-                            Cras justo odio, dapibus ac facilisis in,
-                            egestas eget quam. Morbi leo risus, porta ac
-                                                            consectetur ac, vestibulum at eros.</p>
-                            <p>Praesent commodo cursus magna, vel scelerisque
-                            nisl consectetur et. Vivamus sagittis lacus vel
-                                                            augue laoreet rutrum faucibus dolor auctor.</p>
-                            <p>Aenean lacinia bibendum nulla sed consectetur.
-                            Praesent commodo cursus magna, vel scelerisque
-                            nisl consectetur et. Donec sed odio dui. Donec
-                            ullamcorper nulla non metus auctor
-                                                            fringilla.</p>
-                            <p>Cras mattis consectetur purus sit amet fermentum.
-                            Cras justo odio, dapibus ac facilisis in,
-                            egestas eget quam. Morbi leo risus, porta ac
-                                                            consectetur ac, vestibulum at eros.</p>
-                            <p>Praesent commodo cursus magna, vel scelerisque
-                            nisl consectetur et. Vivamus sagittis lacus vel
-                                                            augue laoreet rutrum faucibus dolor auctor.</p>
-                            <p>Aenean lacinia bibendum nulla sed consectetur.
-                            Praesent commodo cursus magna, vel scelerisque
-                            nisl consectetur et. Donec sed odio dui. Donec
-                            ullamcorper nulla non metus auctor
-                                                            fringilla.</p>
-                            <p>Cras mattis consectetur purus sit amet fermentum.
-                            Cras justo odio, dapibus ac facilisis in,
-                            egestas eget quam. Morbi leo risus, porta ac
-                                                            consectetur ac, vestibulum at eros.</p>
-                            <p>Praesent commodo cursus magna, vel scelerisque
-                            nisl consectetur et. Vivamus sagittis lacus vel
-                                                            augue laoreet rutrum faucibus dolor auctor.</p>
-                            <p>Aenean lacinia bibendum nulla sed consectetur.
-                            Praesent commodo cursus magna, vel scelerisque
-                            nisl consectetur et. Donec sed odio dui. Donec
-                            ullamcorper nulla non metus auctor
-                                                            fringilla.</p>
-                        </ModalBody>
                         <ModalFooter>
                             <Button type="button" color="secondary" onClick={ () => this.setState({ modalConfirm: false})} className="waves-effect">Close</Button>
-                            <Button type="button" color="primary" className="waves-effect waves-light">Save changes</Button>
+                            <Button type="button" color="primary" className="waves-effect waves-light" onClick={this.changeStateBien}>Confimar</Button>
+                        </ModalFooter>
+                    </Modal>
+
+                    <Modal isOpen={this.state.modalHash} toggle={this.toggleModalHash} size="lg">
+                        <div className="modal-header">
+                            <h6 className="modal-title mt-0" id="confirmacion">{ hash_bien ? hash_bien : ''}</h6>
+                            <button type="button" onClick={() => this.setState({ modalHash: false })} className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <ModalFooter>
+                            <Button type="button" color="secondary" onClick={ () => this.setState({ modalHash: false})} className="waves-effect">Close</Button>
                         </ModalFooter>
                     </Modal>
                 </Container>

@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, Breadcrumb, BreadcrumbItem, Button } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, Button, FormGroup, Modal, ModalFooter } from 'reactstrap';
 import { activateAuthLayout } from '../../store/actions';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { AvForm, AvField } from 'availity-reactstrap-validation';
-import { create_comprobante_bien } from './../../helpers/fetch'
+import { 
+    getBienesDependencia, getUsuarioById, getDependencias, 
+    trasladoDependencia, trasladoBienes  } from './../../helpers/fetch'
+import { getLoggedInUser } from './../../helpers/authUtils'
+import { getCargos } from './../../helpers/utils'
+import TrasladoDependenciaTable from '../Tables/trasladoDependenciaTable';
+import { createProcess } from './../../helpers/httpRequest'
 
 
 class TrasladoDependencia extends Component {
@@ -12,37 +18,116 @@ class TrasladoDependencia extends Component {
         super(props);
         this.state = {
             loading: false,
+            show: false,
+            user: getLoggedInUser(),
+            searchUser: null,
+            Bienes: [],
+            showSelect: false,
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this)
+        this.submitId = this.submitId.bind(this)
+        this.submitTraslado = this.submitTraslado.bind(this)
+        this.toggleModal = this.toggleModal.bind(this)
+        this.handleSubmitForm = this.handleSubmitForm.bind(this)
     }
 
-    async handleSubmit(event, values) {
-        values.subtotal = Number(values.subtotal)
-        values.numero = Number(values.numero)
-        values.unidad = parseInt(values.unidad)
-        values.cantidad = parseInt(values.cantidad)
-        values.valor_unitario = Number(values.valor_unitario)
-        values.porcentaje_iva = Number(values.porcentaje_iva)
-        values.total_iva = Number(values.total_iva)
-        values.total_cantidad_entrada = Number(values.total_cantidad_entrada)
-        values.subtotal_grupo = Number(values.subtotal_grupo)
-        values.total_entrada = Number(values.total_entrada)
-        values.total_cantidad = Number(values.total_cantidad)
+    async componentDidMount() {
+        const result = await getDependencias()
+        if (result.data) {
+            this.setState({ Dependencias: result.data.dependencia })
+        }
+    }
 
+    async submitId(event, values) {
+        const { user } = this.state
+        if (Number(user.id) === Number(values.id)) {
+            alert('El usuario que entrega no puede ser el mismo que recibe')
+            return;
+        }
+        const result = await getUsuarioById({ id: values.id })
+        const usuario = result.data.usuario[0]
+        if (!result.data.usuario)
+            alert('Este usuario no existe usuario')
+        else {
+            const idSede = Number(user.dependencia.sede.id)
+            if(!usuario.auth) {
+                alert('Acción no permitida para este usuario')
+                return;
+            }
+            if(usuario.auth.rol.id === 2) {
+                alert('Acción no permitida para este usuario')
+                return
+            }
+            if(usuario.auth.rol.id === 3) {
+                alert('El usuario ya es un director de dependencia')
+                return
+            }
+            const idDependencia = Number(user.dependencia.id)
+            const idRol = Number(user.auth.rol.id)
+            const res = await getBienesDependencia({ idSede, idDependencia }, idRol)
+            this.setState({
+                searchUser: {
+                    funcionario: `${usuario.nombres} ${usuario.apellidos}`,
+                    correo: usuario.correo,
+                    cargo: usuario.cargos[0].cargo,
+                    id: values.id,
+                },
+                Bienes: res.data.bien,
+                show: true,
+                showSelect: true,
+            })
+        }
+    }
+
+    toggleModal() {
+        this.setState(prevState => ({
+            modal: !prevState.modal
+        }));
+    }
+
+    async handleSubmitForm() {
+        await this.setState({ modal: true})
+    }
+
+    async submitTraslado() {
+        const { searchUser, Bienes, user} = this.state;
         try {
-            this.setState({ loading: true})
-            await create_comprobante_bien(values)
-            
-            alert('Elemento creado')
+            // await trasladoDependencia({fk_dependencia: Number(user.dependencia.id), fk_usuario: searchUser.id})
+            await trasladoBienes({fk_usuario: searchUser.id}, Bienes)
+            await this.setState({ modal: false })
+            let BienesId = []
+            let cambios = []
+            Bienes.map( async item => {
+                BienesId.push(item.id)
+                cambios.push({ 
+                    id: item.id,
+                    fk_usuario: searchUser.id,
+                    fk_estado: 1,
+                    fk_dependencia: user.dependencia.id
+                })
+            })
+            const data = {
+                descripcion: "Traslado de dependencia",
+                razon: "Usuario pidio realizar un traslado de dependencia",
+                contratista: "contratista",
+                bienes: BienesId,
+                fk_usuario: user.id,
+                cambios: {
+                    bienes: cambios
+                },
+                fk_tipo_solicitud: 6
+            }
+            await createProcess(data)
+            alert('Bienes trasladados correctamentes')
+            this.props.history.push('/');
         } catch (error) {
             alert('Error en el servidor')
         }
-        this.form && this.form.reset();
     }
 
     render() {
         const errorMessage = 'Campo requerido'
+        const { user, show, searchUser, Bienes, showSelect } = this.state;
         return (
             <React.Fragment>
                 <Container fluid>
@@ -50,112 +135,118 @@ class TrasladoDependencia extends Component {
                         <Row className="align-items-center">
                             <Col sm="12">
                                 <h4 className="page-title">TRASLADO DE DEPENDENCIA</h4>
-                        
                             </Col>
-                            <Breadcrumb>
-                                    <BreadcrumbItem active>Traslado de bien individual</BreadcrumbItem>
-                            </Breadcrumb>
-                        </Row>                        
+                        </Row>
                     </div>
                     <Row>
                         <Col>
                             <Card>
                                 <CardBody>
-                                <AvForm className="form-horizontal" onValidSubmit={this.handleSubmit} ref={c => (this.form = c)}>
-                                    <Row>
-                                        <Col sm='6'>  
-                                            <AvField label="Tipo de Traslado" placeholder="Traslado de bienes individuales" name="tipo_traslado" type="text" grid={{ xs: 8 }} validate={{
-                                                required: { value: true, errorMessage: errorMessage },
-                                                // pattern: { value: '^[0-9]+$', errorMessage: 'Solo valores númericos' },
-                                            }} />
-                                        </Col>
-                                        <Col sm='6'>
-                                            <AvField label="Espacio F&iacute;sico" placeholder="Todos" name="espacio_fisico" type="text" grid={{ xs: 8 }} validate={{
-                                                required: { value: true, errorMessage: errorMessage },
-                                                // pattern: { value: '^[0-9]+$', errorMessage: 'Solo valores númericos' },
-                                            }} />
-                                        </Col>
-                                    </Row>
-                                    <hr></hr> 
                                     <Row>
                                         <Col sm='4' className="subtitulo-form">
-                                        <p>Quien Autoriza </p>
+                                            <h5>Qui&eacute;n Entrega </h5>
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col sm='3'>  
-                        
-                                        <p>Identificaci&oacute;n</p><br></br><p>000000000</p>
-                        
+                                        <Col sm='3'>
+                                            <p><span style={{ fontWeight: 'bold' }}>Identificaci&oacute;n: </span> {user.id}</p>
                                         </Col>
                                         <Col sm='3'>
-                                        <p>Funcionario</p><br></br><p>Pepito Perez</p>
-                                        </Col>
-                                        <Col sm='3'>  
-                                        <p>Correo</p><br></br><p>asf@ads.co</p>    
+                                            <p><span style={{ fontWeight: 'bold' }}>Funcionario: </span> {user.nombres} {user.apellidos}</p>
                                         </Col>
                                         <Col sm='3'>
-                                        <p>Cargo</p><br></br><p>ingeniero</p>     
+                                            <p><span style={{ fontWeight: 'bold' }}>Correo: </span> {user.correo}</p>
+                                        </Col>
+                                        <Col sm='3'>
+                                            <p><span style={{ fontWeight: 'bold' }}>Cargo: </span> {getCargos(user.cargos)}</p>
                                         </Col>
                                     </Row>
-                                    <hr></hr> 
+                                    <hr></hr>
                                     <Row>
                                         <Col sm='6' className="subtitulo-form">
-                                        <p>Quien Entrega </p>
+                                            <h5>Quien Recibe</h5>
                                         </Col>
                                     </Row>
                                     <Row>
-                                    <Col sm='6'>  
-                                            <AvField label="Identificaci&oacute;n" placeholder="1234123456" name="id_entrega" type="text" grid={{ xs: 8 }} validate={{
-                                                required: { value: true, errorMessage: errorMessage },
-                                                // pattern: { value: '^[0-9]+$', errorMessage: 'Solo valores númericos' },
-                                            }} />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col sm='12'>
-                                            <Row>  
-                                                <Col sm='3'>  
-                                
-                                                <p>Identificaci&oacute;n</p><br></br><p>000000000</p>
-                                
-                                                </Col>
-                                                <Col sm='3'>
-                                                <p>Funcionario</p><br></br><p>Pepito Perez</p>
-                                                </Col>
-                                                <Col sm='3'>  
-                                                <p>Correo</p><br></br><p>asf@ads.co</p>    
-                                                </Col>
-                                                <Col sm='3'>
-                                                <p>Cargo</p><br></br><p>ingeniero</p>     
-                                                </Col>
-                                            </Row>   
-                                        </Col>
-                                        
-                                
-                                    </Row>
-                                    <hr></hr> 
+                                        <Col sm='6'>
+                                            <AvForm className="form-horizontal" inline onValidSubmit={this.submitId}>
+                                                <FormGroup>
+                                                    <AvField name="id" value={this.state.id} disabled={show} type="text" placeholder="Ingrese la Identificaci&oacute;n" label="Identificaci&oacute;n" validate={{
+                                                        required: { value: true, errorMessage: errorMessage },
+                                                        pattern: { value: '^[0-9]+$', errorMessage: 'Solo valores númericos' },
+                                                    }} />
 
-                                    <Row className="form-group m-t-20">
-                                        <Col md="12" className="text-right">
-                                           {this.state.loading ? <Button color="primary" className="w-md waves-effect waves-light">Cargando ...</Button> :
-                                                <Button color="primary" className="w-md waves-effect waves-light" type="submit">Realizar Traslado</Button>}
+                                                    <Button color="primary" className="w-md waves-effect waves-light" type="submit" grid={{ xs: 8 }}>Buscar</Button>
+                                                </FormGroup>
+                                            </AvForm>
                                         </Col>
                                     </Row>
-
-                                </AvForm>
+                                    <br></br>
+                                    {   !showSelect ? '' :
+                                        <Row>
+                                            <Col sm='12'>
+                                                <Row>
+                                                    <Col sm='4'>
+                                                        <p><span style={{ fontWeight: 'bold' }}>Funcionario:</span> {searchUser.funcionario}</p>
+                                                    </Col>
+                                                    <Col sm='4'>
+                                                        <p><span style={{ fontWeight: 'bold' }}>Correo:</span> {searchUser.correo}</p>
+                                                    </Col>
+                                                    <Col sm='4'>
+                                                        <p><span style={{ fontWeight: 'bold' }}>Cargo:</span> {searchUser.cargo}</p>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                    }
+                                    {
+                                        !show ? '' :
+                                        <div>
+                                            <hr></hr>
+                                            <Row>
+                                                <Col sm='6' className="subtitulo-form">
+                                                    <h5>Dependencia</h5>
+                                                    <p>{user.dependencia.dependencia}</p>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    }
+                                    <hr></hr>
+                                    {
+                                        !show ? '' :
+                                            Bienes.length === 0 ? alert('No hay bienes en esta busqueda') :
+                                                <TrasladoDependenciaTable Bienes={Bienes} />        
+                                    }
+                                    {
+                                        !show ? '' :
+                                            Bienes.length === 0 ? '' :
+                                                <Row className="form-group m-t-20">
+                                                    <Col md="12" className="text-right">
+                                                        {this.state.loading ? <Button color="primary" className="w-md waves-effect waves-light">Cargando ...</Button> :
+                                                            <Button color="primary" className="w-md waves-effect waves-light" onClick={this.handleSubmitForm}>Realizar Traslado</Button>}
+                                                    </Col>
+                                                </Row>
+                                    }
                                 </CardBody>
                             </Card>
                         </Col>
                     </Row>
-
-
+                    <Modal isOpen={this.state.modal} toggle={this.toggleModal} >
+                        <div className="modal-header">
+                            <h5 className="modal-title mt-0" id="confirmacion">¿Estas seguro de realizar esta acción?</h5>
+                            <button type="button" onClick={() => this.setState({ modal: false })} className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <ModalFooter>
+                            <Button type="button" color="secondary" onClick={ () => this.setState({ modal: false})} className="waves-effect">Close</Button>
+                            <Button type="button" color="primary" className="waves-effect waves-light" onClick={this.submitTraslado}>Confimar</Button>
+                        </ModalFooter>
+                    </Modal>
                 </Container>
-
             </React.Fragment>
         );
     }
 }
 
 export default withRouter(connect(null, { activateAuthLayout })(TrasladoDependencia));
-

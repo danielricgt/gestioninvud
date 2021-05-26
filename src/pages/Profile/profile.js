@@ -1,229 +1,136 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody } from 'reactstrap';
 import { activateAuthLayout } from '../../store/actions';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Settingmenu from '../Subpages/Settingmenu';
-
-//Images
-import user2 from '../../images/users/user-2.jpg';
-import user3 from '../../images/users/user-3.jpg';
-import user4 from '../../images/users/user-4.jpg';
-import user5 from '../../images/users/user-5.jpg';
-import user6 from '../../images/users/user-6.jpg';
-import user7 from '../../images/users/user-7.jpg';
-import user8 from '../../images/users/user-8.jpg';
-import user9 from '../../images/users/user-9.jpg';
-import user10 from '../../images/users/user-10.jpg';
+import { getLoggedInUser } from './../../helpers/authUtils'
+import { getSedesDependencias } from './../../helpers/fetch'
+import ChangePassword from './../UIElements/changePwd'
+import DisableUser from './../UIElements/disableUser'
+import AddSede from './../UIElements/addSede'
+import AddDependencia from './../UIElements/addDependencia'
+import ChangeRol from './../UIElements/changeRol'
+import EditProfile from './../UIElements/editPerfil'
 
 class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            user: getLoggedInUser(),
+            modalUpdate: false,
+            show: false, 
+            sedes: [],
+            dependencias: []
         };
+        this.fetchSedes = this.fetchSedes.bind(this)
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.activateAuthLayout();
+        const { user } = this.state;
+        const length = Number(user.cargos.length)
+        await this.fetchSedes(user.dependencia.sede.id);
+        if (length === 2)
+            await this.setState({ cargo1: user.cargos[1].cargo, showCargo1: true })
+        if (length === 3)
+            await this.setState({
+                cargo1: user.cargos[1].cargo, showCargo1: true,
+                cargo2: user.cargos[2].cargo, showCargo2: true
+            })
+    }
+
+    async fetchSedes(idDependencia) {
+        const res = await getSedesDependencias()
+        this.setState({ sedes: res.data.sede })
+        this.setState({ dependencias: res.data.sede.find(sede => sede.id === Number(idDependencia)).dependencia })
     }
 
     render() {
-
+        const { user, sedes, dependencias } = this.state
+        const idRol = Number(this.state.user.auth.rol.id)
         return (
             <React.Fragment>
                 <Container fluid>
                     <div className="page-title-box">
                         <Row className="align-items-center">
-                            <Col sm="6">
-                                <h4 className="page-title">Directory</h4>
-                                <Breadcrumb>
-                                    <BreadcrumbItem><Link to="#">UD</Link></BreadcrumbItem>
-                                    <BreadcrumbItem><Link to="#">Extra Pages</Link></BreadcrumbItem>
-                                    <BreadcrumbItem active>Directory</BreadcrumbItem>
-                                </Breadcrumb>
-                            </Col>
-                            <Col sm="6">
-                                <div className="float-right d-none d-md-block">
-                                    <Settingmenu />
-                                </div>
+                            <Col sm="12">
+                                <h4 className="page-title">CONFIGURACI&Oacute;N ALMACENISTA</h4>
                             </Col>
                         </Row>
                     </div>
                     <Row>
-                        <Col xl="4" md="6">
+                        <Col xl="12" md="12">
                             <Card className="directory-card">
                                 <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user2} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Jerome A. Hebert</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Jerome@veltrix.com</p>
-                                    <div className="clearfix"></div>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
+                                    {
+                                        idRol === 1 ?
+                                        <div>
+                                            {
+                                                dependencias.length === 0 ? ''
+                                                :
+                                                <div>
+                                                    <EditProfile user={user} sedes={sedes} dependencias={dependencias} idRol={idRol}></EditProfile>
+                                                    <hr></hr>
+                                                </div>
+                                            }
+                                            <AddSede user={user}></AddSede>
+                                            <hr></hr>
+                                            <AddDependencia user={user} sedes={sedes}></AddDependencia>
+                                            <hr></hr>
+                                            <DisableUser user={user}></DisableUser>
+                                            <hr></hr>
+                                            <ChangePassword user={user}></ChangePassword>
+                                        </div>
+                                        : 
+                                        idRol === 2 ?
+                                        <div>
+                                            {
+                                                dependencias.length === 0 ? ''
+                                                :
+                                                <div>
+                                                    <EditProfile user={user} sedes={sedes} dependencias={dependencias} idRol={idRol}></EditProfile>
+                                                    <hr></hr>
+                                                </div>
+                                            }
+                                            <AddSede user={user}></AddSede>
+                                            <hr></hr>
+                                            <AddDependencia user={user} sedes={sedes}></AddDependencia>
+                                            <hr></hr>
+                                            <ChangeRol user={user}></ChangeRol>
+                                            <hr></hr>
+                                            <DisableUser user={user}></DisableUser>
+                                            <hr></hr>
+                                            <ChangePassword user={user}></ChangePassword>
+                                        </div>
+                                        :
+                                        idRol === 3 ? 
+                                        <div>
+                                            {
+                                                dependencias.length === 0 ? ''
+                                                :
+                                                <div>
+                                                    <EditProfile user={user} sedes={sedes} dependencias={dependencias} idRol={idRol}></EditProfile>
+                                                    <hr></hr>
+                                                </div>
+                                            }
+                                            <ChangePassword user={user}></ChangePassword>
+                                        </div>
+                                        :
+                                        <div>
+                                            {
+                                                dependencias.length === 0 ? ''
+                                                :
+                                                <div>
+                                                    <EditProfile user={user} sedes={sedes} dependencias={dependencias} idRol={idRol}></EditProfile>
+                                                    <hr></hr>
+                                                </div>
+                                            }
+                                            <ChangePassword user={user}></ChangePassword>
+                                        </div>                                        
+                                    }
                                 </CardBody>
                             </Card>
                         </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user3} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Adam V. Acker</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Adam@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user4} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Stanley M. Dyke</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Stanley@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user5} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Ben J. Mathison</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Ben@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user6} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">John V. Bailey</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">John@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user7} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Antonio J. Thomas</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Antonio@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user8} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Jerome A. Hebert</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Jerome@veltrix.com</p>
-                                    <div className="clearfix"></div>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user9} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Adam V. Acker</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Adam@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col xl="4" md="6">
-                            <Card className="directory-card">
-                                <CardBody>
-                                    <div className="float-left mr-4">
-                                        <img src={user10} alt="" className="img-fluid img-thumbnail rounded-circle thumb-lg" />
-                                    </div>
-                                    <ul className="list-unstyled social-links float-right">
-                                        <li><Link to="#" className="btn-primary"><i className="mdi mdi-facebook"></i></Link></li>
-                                        <li><Link to="#" className="btn-info"><i className="mdi mdi-twitter"></i></Link></li>
-                                    </ul>
-                                    <h5 className="text-primary font-18 mt-0 mb-1">Stanley M. Dyke</h5>
-                                    <p className="font-12 mb-2">Creative Director</p>
-                                    <p className="mb-4">Stanley@veltrix.com</p>
-                                    <hr />
-                                    <p className="mb-0"><b>Intro : </b>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis atque corrupti quos dolores et... <Link to="#" className="text-primary"> Read More</Link></p>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
                     </Row>
                 </ Container>
             </React.Fragment>

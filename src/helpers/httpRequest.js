@@ -1,7 +1,7 @@
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
 
-const URL = 'https://a5c11e6cbc49.ngrok.io'
+const URL = 'https://e0ab7ac4ba5f.ngrok.io'
 const SECRET_SEED = 'UD2021!'
 const TOKEN_EXP = '7d'
 const token = jwt.sign({ id: '1231' }, SECRET_SEED, { expiresIn: TOKEN_EXP });

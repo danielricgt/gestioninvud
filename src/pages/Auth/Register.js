@@ -92,11 +92,11 @@ class Register extends Component {
                                 }} />
                                 <AvField label="Nombre" placeholder="Ingrese su nombre" name="nombres" type="text" grid={{ xs: 8 }} validate={{
                                     required: { value: true, errorMessage: errorMessage },
-                                    pattern: { value: '^[A-Za-z]+$', errorMessage: 'Solo valores alfanuméricos' },
+                                    pattern: { value: '^[a-zA-Z0-9_ ´]*$', errorMessage: 'Solo valores alfanuméricos' },
                                 }} />
                                 <AvField label="Apellidos" placeholder="Ingrese sus apellidos" name="apellidos" type="text" grid={{ xs: 8 }} validate={{
                                     required: { value: true, errorMessage: errorMessage },
-                                    pattern: { value: '^[A-Za-z]+$', errorMessage: 'Solo valores alfanuméricos' },
+                                    pattern: { value: '^[a-zA-Z0-9_ ´]*$', errorMessage: 'Solo valores alfanuméricos' },
                                 }} />
                                 <AvField label="Correo" placeholder="Ingrese su correo" name="correo" type="text" grid={{ xs: 8 }} validate={{
                                     required: { value: true, errorMessage: errorMessage },
@@ -128,7 +128,7 @@ class Register extends Component {
                                 </AvField>
                                 <AvField label="Cargo" placeholder="Ingrese su cargo" name="cargo" type="text" grid={{ xs: 8 }} validate={{
                                     required: { value: true, errorMessage: errorMessage },
-                                    pattern: { value: '^[A-Za-z]+$', errorMessage: 'Solo valores alfanuméricos' },
+                                    pattern: { value: '^[a-zA-Z0-9_ ´]*$', errorMessage: 'Solo valores alfanuméricos' },
                                 }} />
                                 <AvField label="Contraseña" placeholder="Ingrese su contraseña" name="password" type="password" grid={{ xs: 8 }} validate={{
                                     required: { value: true, errorMessage: errorMessage },

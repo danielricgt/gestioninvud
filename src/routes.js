@@ -17,15 +17,6 @@ import AltaBien from './pages/Bienes/altaBien'
 import AprobacionTraslado from './pages/Aprobaciones/aprobacionesTraslado'
 import AprobacionDependencia from './pages/Aprobaciones/aprobacionesDependencia'
 
-
-// TODO
-import MaterialDesign from './pages/Icons/icons-material';
-import FontAwesome from './pages/Icons/icons-fontawesome';
-import IonIcons from './pages/Icons/icons-ion';
-import ThemifyIcons from './pages/Icons/icons-themify';
-import Dripicons from './pages/Icons/icons-dripicons';
-import TypIcons from './pages/Icons/icons-typicons';
-
 import Logout from './pages/Auth/Logout';
 import Register from './pages/Auth/Register';
 
@@ -35,14 +26,6 @@ const routes = [
     { path: '/login', component: Login, ispublic: true },
     { path: '/logout', component: Logout, ispublic: true },
     { path: '/register', component: Register, ispublic: true },
-
-    // TODO Icons
-    { path: '/icons-material', component: MaterialDesign },
-    { path: '/icons-fontawesome', componentgit: FontAwesome },
-    { path: '/icons-ion', component: IonIcons },
-    { path: '/icons-themify', component: ThemifyIcons },
-    { path: '/icons-dripicons', component: Dripicons },
-    { path: '/icons-typicons', component: TypIcons },
     
     // Dashboard
     // { path: '/principal', component: Dashboard },
@@ -68,24 +51,3 @@ const routes = [
 ];
 
 export default routes;
-
-
-//   // Ui Elements
-//   { path: '/ui-alerts', component: Uialerts },
-//   { path: '/ui-buttons', component: Uibuttons },
-//   { path: '/ui-cards', component: Uicards },
-//   { path: '/ui-carousel', component: Uicarousel },
-//   { path: '/ui-dropdowns', component: Uidropdowns },
-//   { path: '/ui-grid', component: Uigrid },
-//   { path: '/ui-images', component: Uiimages },
-//   { path: '/ui-modals', component: Uimodals },
-//   { path: '/ui-rangeslider', component: Uirangeslider },
-//   { path: '/ui-session-timeout', component: UisessionTimeout },
-//   { path: '/ui-progressbars', component: Uiprogressbars },
-//   { path: '/ui-sweet-alert', component: Uisweetalert },
-//   { path: '/ui-tabs-accordions', component: Uitabsaccordions },
-//   { path: '/ui-typography', component: Uitypography },
-//   { path: '/ui-video', component: Uivideo },
-//   { path: '/ui-general', component: Uigeneral },
-//   { path: '/ui-colors', component: Uicolors },
-//   { path: '/ui-rating', component: Uirating },

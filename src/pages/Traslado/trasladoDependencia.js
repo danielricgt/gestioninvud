@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { AvForm, AvField } from 'availity-reactstrap-validation';
 import { 
     getBienesDependencia, getUsuarioById, getDependencias, 
-    trasladoDependencia, trasladoBienes  } from './../../helpers/fetch'
+    trasladoBienes  } from './../../helpers/fetch'
 import { getLoggedInUser } from './../../helpers/authUtils'
 import { getCargos } from './../../helpers/utils'
 import TrasladoDependenciaTable from '../Tables/trasladoDependenciaTable';

@@ -30,14 +30,14 @@ class BajaBien extends Component {
             const idRol = Number(user.auth.rol.id)
             const idSede = Number(this.state.user.dependencia.sede.id)
             let res 
-            if(idRol === 4) 
+            if(idRol === 4 || idRol === 2) 
                 res = await getBienes({idSede, fk_usuario: user.id }, 7)
             else 
                 res = await getBienes({idSede }, 2)
             
             const result = res
             if(result.data.bien.length === 0) {
-                alert('No hay bienes para realizar un alta de bien')
+                alert('No hay bienes para realizar una baja de bien')
                 this.props.history.push('/')
             }
             else

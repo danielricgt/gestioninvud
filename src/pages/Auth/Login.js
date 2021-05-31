@@ -19,22 +19,6 @@ class Login extends Component {
         this.props.checkLogin(values.correo, values.password, this.props.history);
     }
 
-    componentDidMount(){
-        // document.body.style.backgroundImage = `url(${BackgroundImage})`;
-        // document.body.style.backgroundSize = 'cover';
-        // document.body.style.height = '100%';
-        
-        // document.body.style.backgroundPosition = 'center';
-        // document.body.style.height = '100vh';
-        // document.body.style.backgroundRepeat = 'no-repeat';
-        // document.body.style.backgroundPosition = 'top';
-        // document.body.style.position = 'relative';
-        // document.body.style.minHeight = '100%';
-        
-        // document.body.style.backgroundColor = "red"// Set the style
-        // document.body.className="body-component-a" // Or set the class
-    }
-
     componentWillUnmount() {
         document.body.style.backgroundColor = '#f8f8fa !important';
     }
@@ -72,6 +56,7 @@ class Login extends Component {
                             <AvForm className="form-horizontal m-t-10" onValidSubmit={this.handleSubmit} >
                                 <AvField name="correo" label="Usuario" value={this.state.correo} placeholder="Ingrese su usuario" type="text" validate={{
                                     required: { value: true, errorMessage: errorMessage },
+                                    pattern: { value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9-]+)*$/, errorMessage: 'El usuario debe ser un correo institucional'}
                                 }} />
                                 <AvField name="password" label="Contraseña" value={this.state.password} placeholder="Ingrese su contraseña" type="password" validate={{
                                     required: { value: true, errorMessage: errorMessage },

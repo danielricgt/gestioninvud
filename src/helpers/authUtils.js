@@ -5,7 +5,6 @@ import { LOGIN_USER } from './../graphql/queries';
 
 //Set the logged in user data in local session 
 export const setLoggeedInUser = (user) => {
-    console.log(user);
     localStorage.setItem('user', JSON.stringify(user));
 }
 

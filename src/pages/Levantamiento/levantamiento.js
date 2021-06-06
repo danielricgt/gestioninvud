@@ -164,7 +164,7 @@ class Levantamiento extends Component {
                                             <LevantamientoTable idRol={idRol} Bienes={Bienes} callback={this.handleBienes}></LevantamientoTable>
                                             <Row className="form-group m-t-20">
                                                 <Col md="12" className="text-right">
-                                                    <Button color="primary" className="w-md waves-effect waves-light" onClick={this.submitLevantamiento.bind(this)}>Realizar Traslado</Button>
+                                                    <Button color="primary" className="w-md waves-effect waves-light" onClick={this.submitLevantamiento.bind(this)}>Realizar Levantamiento</Button>
                                                 </Col>
                                             </Row>
                                         </div>

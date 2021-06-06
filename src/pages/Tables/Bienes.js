@@ -131,7 +131,7 @@ class BienesTable extends Component {
                         observaciones: data.observaciones ? data.observaciones : 'Ninguna',
                         hash: !data.hash_bien ? 'Hash no disponible' :
                             <Button type="button" color="primary" className="waves-effect waves-light" 
-                                onClick={() => this.openModal(data.hash_bien,)}>
+                                onClick={() => this.openModalHash(data.hash_bien,)}>
                                 Ver
                             </Button>,
                         actualizar: idRol === 4 ? '' : <button className="btn btn-primary rounded-pill" onClick={() => this.openModal(data)}>Actualizar</button>

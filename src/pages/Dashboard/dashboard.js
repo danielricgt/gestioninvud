@@ -73,7 +73,6 @@ class Dashboard extends Component {
         let filteredBienes = []
 
         Bienes.forEach(data => {
-            console.log(data)
             if(data.usuario) {
                 if(Number(data.usuario.dependencia.id) === Number(values.dependencia) ) {
                     filteredBienes.push(data)

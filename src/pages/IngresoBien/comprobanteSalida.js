@@ -122,8 +122,10 @@ class ComprobanteSalida extends Component {
     }
     
     async  handleSubmit() {
-        let { values, bien, user } = this.state
+        let { values, bien, user, idDependencia } = this.state
         const date = new Date();
+
+        
         try {
             const data = {
                 idBien: this.state.bien.id,
@@ -136,6 +138,7 @@ class ComprobanteSalida extends Component {
                 idComprobante: Number(this.state.idComprobante),
                 salida: values.salida,
                 fecha_creacion: date.toISOString(),
+                fk_dependencia: idDependencia
             }
             this.setState({ loading: true})
             await editarBienSalida(data)

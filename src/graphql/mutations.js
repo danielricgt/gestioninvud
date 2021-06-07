@@ -102,6 +102,7 @@ export const EDIT_BIEN_SALIDA = gql`
         $espacio_fisico: String = "",
         $idComprobante: Int!,
         $salida: String = ""
+        $fk_dependencia: Int!
         $fecha_creacion: timestamptz! 
     ) {
         update_bien(where: { id: { _eq: $idBien } },
@@ -115,6 +116,7 @@ export const EDIT_BIEN_SALIDA = gql`
             fk_estado: 1,
             espacio_fisico: $espacio_fisico,
             fecha_creacion: $fecha_creacion
+            fk_dependencia: $fk_dependencia
         }) {
             returning {
                 id

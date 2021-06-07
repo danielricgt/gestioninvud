@@ -76,6 +76,10 @@ class TrasladoIndividual extends Component {
             const idDependencia = Number(user.dependencia.id)
             const idRol = Number(user.auth.rol.id)
             let res
+            console.log(idRol);
+            console.log(idSede)
+            console.log(idDependencia)
+            console.log(user.id);
             if(idRol === 4) {
                 res = await getBienesDependencia({ idSede, idDependencia, fk_usuario: user.id }, idRol)
             }
